@@ -18,6 +18,9 @@ public interface UtilConstant {
 	public final static String titleWord2Vec = ".\\resources\\word2vec.txt";
 	public final static String titleSimMatrix = ".\\resources\\titlesimmatrix.txt";
 	
+	public final static String codeContentSimMatrix = ".\\resources\\itemsim.txt";
+	
+	
 	public final static String titleSimMatrixpart = ".\\resources\\titlesimmatrixpart.txt";
 	
 	public final static String simMatrixFile = ".\\resources\\simmatrix.txt";
@@ -36,6 +39,8 @@ public interface UtilConstant {
 	public static final String tagMatrix = ".\\resources\\tagmatrix.txt";
 	public static final String tagSim = ".\\resources\\tagsim.txt";
 	
+	public final static String cbfcontentMatrix = ".\\resources\\contentmatrix.txt";
+	
 	public static final String urMatrix = ".\\resources\\urmatrix.txt";
 	public static final String relMap = ".\\resources\\relmap.txt";
 	
@@ -49,7 +54,7 @@ public interface UtilConstant {
 	public final static int numOfCode = 6151;//653;
 	public final static int numOfTag = 756;
 	
-	public final static double reptReduced = 10000000.0;
+	public final static double reptReduced = 100000.0;
 	
 	public final static double cfParam = 0.45081657;
 	
@@ -78,11 +83,12 @@ public interface UtilConstant {
 	public final static String devList = ".\\resources\\dev.txt";
 	
 	// Regression:??
-	public final static double multiply_cf   = 0.0;
-	public final static double multiply_cbf  = 0.0;
-	public final static double multiply_tag  = 0.0;
-	public final static double multiply_ur   = 1.0;
-	public final static double multiply_rept = 0.0;
+	public final static double multiply_cf   = 0.0;//0.02;
+	public final static double multiply_cbf  = 0.0;//0.1;
+	public final static double multiply_tag  = 0.0;//1.0;
+	public final static double multiply_ur   = 1.0;//
+	public final static double multiply_content = 0.0;//0.1;
+	public final static double multiply_rept = 0.0;//0.2
 	public final static double greatParam    = 0.5;
 	
 	/*

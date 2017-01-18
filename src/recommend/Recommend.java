@@ -31,8 +31,7 @@ public class Recommend implements UtilConstant, MatrixUtil {
 
 	public static void main(String[] args) {
 		
-		long t1 = System.currentTimeMillis();
-		
+		long t1 = System.currentTimeMillis();		
 
 		
 //		MainCrawler mc = new MainCrawler();
@@ -57,9 +56,7 @@ public class Recommend implements UtilConstant, MatrixUtil {
 		
 		MergeEvaluation me = new MergeEvaluation();
 		me.mergeEval();
-//		calAverage();
-		
-		
+//		calAverage();		
 
 		long t2 = System.currentTimeMillis();
 		System.out.println("Run Time: " + (t2-t1)/1000 + " seconds");
@@ -182,6 +179,14 @@ public class Recommend implements UtilConstant, MatrixUtil {
 		
 //		CBFRecommend cbfRec = new CBFRecommend();
 //		cbfRec.CBFAlg();
+		
+		/*  2.5
+		 *  Content-based Filtering, using code documents
+		 */
+		
+//		ContentRecommend cntRec = new ContentRecommend();
+//		cntRec.CBFAlg();
+		
 		
 		/*  3. 
 		 *  Tag Similarity compare

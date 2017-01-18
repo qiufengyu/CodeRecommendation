@@ -34,8 +34,8 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 	Map<Integer, Vector<Double>> cbf_Matrix;
 	Map<Integer, Vector<Double>> tag_Matrix;
 	Map<Integer, Vector<Double>> ur_Matrix;
-	Vector<Double> rept_Reduced;
-	
+	Map<Integer, Vector<Double>> content_Matrix;
+	Vector<Double> rept_Reduced;	
 	
 	public RecommendEvaluation() {
 		db = new DBTools();
@@ -48,7 +48,9 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 		cbf_Matrix = new TreeMap<Integer, Vector<Double>>();
 		tag_Matrix = new TreeMap<Integer, Vector<Double>>();
 		ur_Matrix = new TreeMap<Integer, Vector<Double>>();
+		content_Matrix = new TreeMap<Integer, Vector<Double>>();
 		rept_Reduced = new Vector<Double>();
+		rept_Reduced.setSize(numOfCode);
 		
 		BufferedReader br;
 		String line;
@@ -117,39 +119,46 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 	}
 	
 	public void synthesis() {
-		readAllMatrix();
-		// calculation
+		
+		readCFMatrix();
 		Map<Integer, Vector<Double>> cf_Matrix_multiply = MatrixUtil.multiplyMatrixDouble(cf_Matrix, multiply_cf);
 		cf_Matrix.clear();
+		
+		readCBFMatrix();
 		Map<Integer, Vector<Double>> cbf_Matrix_multiply = MatrixUtil.multiplyMatrixDouble(cbf_Matrix, multiply_cbf);
 		cbf_Matrix.clear();
+		
 		Map<Integer, Vector<Double>> score1 = MatrixUtil.addMatrix(cf_Matrix_multiply, cbf_Matrix_multiply);
+		
 		cf_Matrix_multiply.clear();
 		cbf_Matrix_multiply.clear();
 		
+		readTagMatrix();
 		Map<Integer, Vector<Double>> tag_Matrix_multiply = MatrixUtil.multiplyMatrixDouble(tag_Matrix, multiply_tag);
 		tag_Matrix.clear();
+		
 		Map<Integer, Vector<Double>> score2 = MatrixUtil.addMatrix(tag_Matrix_multiply, score1);
 		tag_Matrix_multiply.clear(); 
 		score1.clear();
 		
+		readURMatrix();
 		Map<Integer, Vector<Double>> ur_Matrix_multiply = MatrixUtil.multiplyMatrixDouble(ur_Matrix, multiply_ur);
 		ur_Matrix.clear();
 		Map<Integer, Vector<Double>> score3 = MatrixUtil.addMatrix(score2, ur_Matrix_multiply);
 		score2.clear(); 
 		ur_Matrix_multiply.clear();
 		
-		/*
-		Map<Integer, Vector<Double>> ut_Matrix_multiply = MatrixUtil.multiplyMatrixDouble(ut_Matrix, multiply_ut);
-		ut_Matrix.clear();		
-		
-		Map<Integer, Vector<Double>> score4 = MatrixUtil.addMatrix(score3, ut_Matrix_multiply);
-		score3.clear(); 
-		ut_Matrix_multiply.clear();
-		*/
-		
-		Map<Integer, Vector<Double>> finalScore = MatrixUtil.biasMatrix(score3, rept_Reduced, multiply_rept);
+		readContentMatrix();
+		Map<Integer, Vector<Double>> content_Matrix_multiply = MatrixUtil.multiplyMatrixDouble(content_Matrix, multiply_content);
+		content_Matrix.clear();
+		Map<Integer, Vector<Double>> score4 = MatrixUtil.addMatrix(score3, content_Matrix_multiply);
 		score3.clear();
+		content_Matrix_multiply.clear();
+		
+		readREPTVector();
+		Map<Integer, Vector<Double>> finalScore = MatrixUtil.biasMatrix(score4, rept_Reduced, multiply_rept);
+		score3.clear();
+		
 		// evaluation
 		Set<String> synResultSet = new HashSet<String>();
 		for(Entry<Integer, Vector<Double>> entry : finalScore.entrySet()) {
@@ -216,14 +225,10 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
-		
-		
-		
+		}	
 	}
 
-	private void readAllMatrix() {
-		// TODO Auto-generated method stub
+	private void readCFMatrix() {		
 		BufferedReader br;
 		String line;
 		try {
@@ -244,10 +249,21 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 				count++;				
 			}
 			br.close();
-			
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void readCBFMatrix() {
+		BufferedReader br;
+		String line;
+		try {			
 			// content-based filtering
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(cbfMatrix),"UTF-8"));
-			count = 0;
+			int count = 0;
 			while(true) {
 				line = br.readLine();
 				if(line == null)
@@ -262,10 +278,48 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 				count++;				
 			}
 			br.close();
-			
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void readContentMatrix() {
+		BufferedReader br;
+		String line;
+		try {			
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(cbfcontentMatrix),"UTF-8"));
+			int count = 0;
+			while(true) {
+				line = br.readLine();
+				if(line == null)
+					break;	
+				Vector<Double> score = new Vector<Double>();
+				score.setSize(numOfCode);
+				String[] sp = line.split(" ");
+				for(int i = 0; i<sp.length; ++i) {
+					score.set(i, Double.valueOf(sp[i]));
+				}
+				content_Matrix.put(count, score);
+				count++;				
+			}
+			br.close();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void readTagMatrix() {
+		// TODO Auto-generated method stub
+		BufferedReader br;
+		String line;
+		try {			
 			// tag
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(tagMatrix),"UTF-8"));
-			count = 0;
+			int count = 0;
 			while(true) {
 				line = br.readLine();
 				if(line == null)
@@ -277,24 +331,6 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 					score.set(i, Double.valueOf(sp[i]));
 				}
 				tag_Matrix.put(count, score);
-				count++;				
-			}
-			br.close();
-			
-			// user relation
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(urMatrix),"UTF-8"));
-			count = 0;
-			while(true) {
-				line = br.readLine();
-				if(line == null)
-					break;	
-				Vector<Double> score = new Vector<Double>();
-				score.setSize(numOfCode);
-				String[] sp = line.split(" ");
-				for(int i = 0; i<sp.length; ++i) {
-					score.set(i, Double.valueOf(sp[i]));
-				}
-				ur_Matrix.put(count, score);
 				count++;				
 			}
 			br.close();
@@ -319,16 +355,51 @@ public class RecommendEvaluation implements UtilConstant, MatrixUtil {
 			br.close();
 			*/
 			
-			// reputation reduced
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(userReptVec),"UTF-8"));
-			count = 0;
-			Vector<Double> reptReduced = new Vector<Double>();
-			reptReduced.setSize(numOfCode);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void readURMatrix() {
+		// user relation
+		BufferedReader br;
+		String line;
+		try {		
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(urMatrix),"UTF-8"));
+			int count = 0;
 			while(true) {
 				line = br.readLine();
 				if(line == null)
 					break;	
-				reptReduced.set(count, Double.valueOf(line));
+				Vector<Double> score = new Vector<Double>();
+				score.setSize(numOfCode);
+				String[] sp = line.split(" ");
+				for(int i = 0; i<sp.length; ++i) {
+					score.set(i, Double.valueOf(sp[i]));
+				}
+				ur_Matrix.put(count, score);
+				count++;				
+			}
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void readREPTVector() {
+		BufferedReader br;
+		String line;
+		try {		
+			// reputation reduced
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(userReptVec),"UTF-8"));
+			int count = 0;
+			while(true) {
+				line = br.readLine();
+				if(line == null)
+					break;	
+				rept_Reduced.set(count, Double.valueOf(line));
 				count++;
 			}
 			br.close();			
