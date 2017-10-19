@@ -1,8 +1,14 @@
-## Recommender System and Algorithm Design  
+## Recommender System and Algorithm Design
+
+### Publication
+
+The related paper is going to appear in [CSAI-2017](http://www.csai.org/)
+
+Some description please refer to [my blog](https://qiufengyu.github.io/2016/11/12/code-recommendation/).
 
 ### A final project of bachelor in NJU
 
-code data from [codereview](http://codereview.stackexchange.com/), active codes with >50 views
+Code data from [codereview](http://codereview.stackexchange.com/), active codes with >50 views
 
 If you can read [an overview of recommender algorithms](https://buildingrecommenders.wordpress.com/2015/11/16/overview-of-recommender-algorithms-part-1/), I will be glad.
 
