@@ -2,7 +2,17 @@
 
 ### Publication
 
-The related paper is going to appear in [CSAI-2017](http://www.csai.org/)
+The related paper entitled *Code Recommendation with Natural Language Tags and Other Heterogeneous Data* is accepted by [CSAI-2017](http://www.csai.org/). Download from [ACM](http://delivery.acm.org/10.1145/3170000/3168407/p137-Qiu.pdf).
+
+### Citing
+```
+@inproceedings{Qiu2017CodeRW,
+  title={Code Recommendation with Natural Language Tags and Other Heterogeneous Data},
+  author={Fengyu Qiu and Weiyi Ge and Xinyu Dai},
+  booktitle={CSAI 2017},
+  year={2017}
+}
+```
 
 Some description please refer to [my blog](https://qiufengyu.github.io/2016/11/12/code-recommendation/).
 
